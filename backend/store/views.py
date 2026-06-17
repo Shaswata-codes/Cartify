@@ -6,6 +6,11 @@ from .serializers import UserSerializer, UserRegistrationSerializer
 from rest_framework import status
 from .models import Category, Product, Cart, CartItem, Order, OrderItem
 from .serializers import CategorySerializer, ProductSerializer, CartSerializer, CartItemSerializer
+from django.conf import settings
+from django.core.mail import send_mail
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 @api_view(['GET'])
@@ -146,5 +151,35 @@ def register(request):
     serializer = UserRegistrationSerializer(data=request.data)
     if serializer.is_valid():
         user = serializer.save()
+        
+        # Send welcome email on successful signup
+        try:
+            subject = 'Welcome to NovaBasket – Your Account Has Been Created!'
+            message = (
+                f"Dear {user.username},\n\n"
+                "Welcome to NovaBasket!\n\n"
+                "Thank you for creating an account with us. We're excited to have you as part of our community.\n\n"
+                "Your account has been successfully registered, and you can now explore our collection, "
+                "save your favorite products, and enjoy a seamless shopping experience.\n\n"
+                "If you did not create this account, please contact our support team immediately.\n\n"
+                "Thank you for choosing NovaBasket. We look forward to serving you!\n\n"
+                "Best regards,\n"
+                "The NovaBasket Team\n"
+                "Email: support@novabasket.com\n"
+                "Website: https://xyz.com"
+            )
+            from_email = settings.DEFAULT_FROM_EMAIL
+            recipient_list = [user.email]
+            send_mail(subject, message, from_email, recipient_list, fail_silently=False)
+        except Exception as e:
+            logger.error(f"Failed to send signup email to {user.email}: {e}")
+            
         return Response(UserSerializer(user).data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def get_users(request):
+    users = User.objects.all()
+    serializer = UserSerializer(users, many=True)
+    return Response(serializer.data)

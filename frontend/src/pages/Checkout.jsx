@@ -41,7 +41,7 @@ function Checkout() {
             if (response.ok) {
                 const data = await response.json();
                 clearCart();
-                navigate(`/order/${data.id}`);
+                navigate(`/order/${data.order_id}`);
             } else {
                 const errorData = await response.json();
                 setMessage(errorData.message);

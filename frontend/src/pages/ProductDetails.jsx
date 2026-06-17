@@ -32,13 +32,6 @@ function ProductDetails() {
   }, [id]);
 
   const handleAddToCart = async () => {
-    const token = getAccessToken();
-
-    if (!token) {
-      navigate("/login");
-      return;
-    }
-
     await addToCart(product.id, 1);
   };
 

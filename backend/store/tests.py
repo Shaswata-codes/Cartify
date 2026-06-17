@@ -3,6 +3,7 @@ from django.urls import reverse
 from rest_framework.test import APITestCase
 from rest_framework import status
 from .models import Category, Product, Cart, CartItem, Order, OrderItem
+from django.core import mail
 
 class ECommerceAPITests(APITestCase):
 
@@ -25,6 +26,7 @@ class ECommerceAPITests(APITestCase):
         self.cart_update_url = '/api/cart/update/'
         self.cart_clear_url = '/api/cart/clear/'
         self.order_create_url = '/api/orders/create/'
+        self.users_url = '/api/users/'
 
     def test_get_products(self):
         response = self.client.get(self.products_url)
@@ -58,12 +60,26 @@ class ECommerceAPITests(APITestCase):
         response = self.client.post(self.register_url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response.data['username'], "testuser")
+        
+        # Verify email was sent
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[0].subject, 'Welcome to NovaBasket – Your Account Has Been Created!')
+        self.assertEqual(mail.outbox[0].to, ['testuser@example.com'])
 
         # Test password mismatch
         data['password2'] = "differentpassword"
         data['username'] = "testuser2"
         response = self.client.post(self.register_url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_get_users(self):
+        # Create a test user first
+        User.objects.create_user(username="existing_test_user", email="test@example.com", password="password123")
+        
+        response = self.client.get(self.users_url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]['username'], "existing_test_user")
 
     def test_guest_cart_operations(self):
         # 1. Fetch empty cart
