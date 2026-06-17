@@ -87,6 +87,14 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
+print("--- DB CONFIG DIAGNOSTICS ---")
+print(f"DB_NAME is set: {os.getenv('DB_NAME') is not None}")
+print(f"DB_USER is set: {os.getenv('DB_USER') is not None}")
+print(f"DB_PASSWORD is set: {os.getenv('DB_PASSWORD') is not None}")
+print(f"DB_HOST is set: {os.getenv('DB_HOST') is not None}")
+print(f"DB_PORT is set: {os.getenv('DB_PORT') is not None}")
+print("------------------------------")
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
