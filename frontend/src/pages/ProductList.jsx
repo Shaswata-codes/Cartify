@@ -7,7 +7,8 @@ function ProductList() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetch(`${import.meta.env.VITE_API_URL}/api/products/`)
+    const apiUrl = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000";
+    fetch(`${apiUrl}/api/products/`)
       .then((response) => {
         if (!response.ok) {
           throw new Error("Network response was not ok");

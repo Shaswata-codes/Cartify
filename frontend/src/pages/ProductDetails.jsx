@@ -14,7 +14,8 @@ function ProductDetails() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetch(`${import.meta.env.VITE_API_URL}/api/products/${id}/`)
+    const apiUrl = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000";
+    fetch(`${apiUrl}/api/products/${id}/`)
       .then((response) => {
         if (!response.ok) {
           throw new Error("Product not found or failed to fetch details");
@@ -58,7 +59,8 @@ function ProductDetails() {
       return imagePath;
     }
 
-    return `${import.meta.env.VITE_API_URL}${imagePath}`;
+    const apiUrl = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000";
+    return `${apiUrl}${imagePath}`;
   };
 
   if (loading) {
