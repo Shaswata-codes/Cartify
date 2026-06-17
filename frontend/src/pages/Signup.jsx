@@ -3,8 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 
 function Register() {
     const BASE =
-        import.meta.env.VITE_API_URL ||
-        "http://127.0.0.1:8000";
+        (import.meta.env.VITE_API_URL || "http://127.0.0.1:8000").replace(/\/$/, "");
 
     const navigate = useNavigate();
 

@@ -4,7 +4,7 @@ import {Link} from 'react-router-dom';
 function CartDrawer() {
   const { isCartOpen, setIsCartOpen, cart, updateQuantity, removeFromCart } = useCart();
 
-  const apiUrl = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000";
+  const apiUrl = (import.meta.env.VITE_API_URL || "http://127.0.0.1:8000").replace(/\/$/, "");
 
   const getImageUrl = (imagePath) => {
     if (!imagePath) return "https://via.placeholder.com/100?text=No+Image";
